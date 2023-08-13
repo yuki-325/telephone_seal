@@ -3,17 +3,21 @@ import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/flutter_login.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:telephone_seal/mock/users.dart';
-import 'package:telephone_seal/utils/constants.dart';
+import 'package:telephone_seal/common/utils/constants.dart';
+import 'package:telephone_seal/widget/intro_widget.dart';
 
-// import 'package:login_example/dashboard_screen.dart';
-
+// ログイン画面を構築するウィジェットです
 class LoginScreen extends StatelessWidget {
+  // ルート名の定義
   static const routeName = '/auth';
 
+  // コンストラクタ
   const LoginScreen({Key? key}) : super(key: key);
 
+  // ログイン処理の待機時間を計算する関数です
   Duration get loginTime => Duration(milliseconds: timeDilation.ceil() * 2250);
 
+  // ユーザーのログインを試行する非同期関数です
   Future<String?> _loginUser(LoginData data) {
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(data.name)) {
@@ -26,12 +30,14 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  // ユーザーのサインアップを試行する非同期関数です
   Future<String?> _signupUser(SignupData data) {
     return Future.delayed(loginTime).then((_) {
       return null;
     });
   }
 
+  // パスワードのリカバリを試行する非同期関数です
   Future<String?> _recoverPassword(String name) {
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(name)) {
@@ -41,6 +47,7 @@ class LoginScreen extends StatelessWidget {
     });
   }
 
+  // サインアップの確認を試行する非同期関数です
   Future<String?> _signupConfirm(String error, LoginData data) {
     return Future.delayed(loginTime).then((_) {
       return null;
@@ -49,16 +56,20 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Flutter Loginウィジェットを返します
     return FlutterLogin(
+      // ログイン画面のタイトルを設定します
       title: Constants.appName,
-      // logo: const AssetImage('assets/images/ecorp.png'),
+      // ロゴやタイトルに使用するタグを設定します
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
       navigateBackAfterRecovery: true,
       onConfirmRecover: _signupConfirm,
       onConfirmSignup: _signupConfirm,
       loginAfterSignUp: false,
+      // ログインプロバイダーのリスト
       loginProviders: [
+        // LinkedInでのサインインを提供するログインプロバイダー
         LoginProvider(
           button: Buttons.linkedIn,
           label: 'Sign in with LinkedIn',
@@ -66,10 +77,11 @@ class LoginScreen extends StatelessWidget {
             return null;
           },
           providerNeedsSignUpCallback: () {
-            // put here your logic to conditionally show the additional fields
+            // 追加のフィールドを表示するかどうかを決定するためのロジックを提供します
             return Future.value(true);
           },
         ),
+        // Googleでのサインインを提供するログインプロバイダー
         LoginProvider(
           icon: FontAwesomeIcons.google,
           label: 'Google',
@@ -77,6 +89,7 @@ class LoginScreen extends StatelessWidget {
             return null;
           },
         ),
+        // GitHubでのサインインを提供するログインプロバイダー
         LoginProvider(
           icon: FontAwesomeIcons.githubAlt,
           callback: () async {
@@ -87,6 +100,7 @@ class LoginScreen extends StatelessWidget {
           },
         ),
       ],
+      // 利用規約のリスト
       termsOfService: [
         TermOfService(
           id: 'newsletter',
@@ -100,156 +114,40 @@ class LoginScreen extends StatelessWidget {
           linkUrl: 'https://github.com/NearHuscarl/flutter_login',
         ),
       ],
-      additionalSignupFields: [
-        const UserFormField(
-          keyName: 'Username',
-          icon: Icon(FontAwesomeIcons.userLarge),
-        ),
-        const UserFormField(keyName: 'Name'),
-        const UserFormField(keyName: 'Surname'),
-        UserFormField(
-          keyName: 'phone_number',
-          displayName: 'Phone Number',
-          userType: LoginUserType.phone,
-          fieldValidator: (value) {
-            final phoneRegExp = RegExp(
-              '^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}\$',
-            );
-            if (value != null &&
-                value.length < 7 &&
-                !phoneRegExp.hasMatch(value)) {
-              return "This isn't a valid phone number";
-            }
-            return null;
-          },
-        ),
-      ],
-      // scrollable: true,
-      // hideProvidersTitle: false,
-      // loginAfterSignUp: false,
-      // hideForgotPasswordButton: true,
-      // hideSignUpButton: true,
-      // disableCustomPageTransformer: true,
-      // messages: LoginMessages(
-      //   userHint: 'User',
-      //   passwordHint: 'Pass',
-      //   confirmPasswordHint: 'Confirm',
-      //   loginButton: 'LOG IN',
-      //   signupButton: 'REGISTER',
-      //   forgotPasswordButton: 'Forgot huh?',
-      //   recoverPasswordButton: 'HELP ME',
-      //   goBackButton: 'GO BACK',
-      //   confirmPasswordError: 'Not match!',
-      //   recoverPasswordIntro: 'Don\'t feel bad. Happens all the time.',
-      //   recoverPasswordDescription: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-      //   recoverPasswordSuccess: 'Password rescued successfully',
-      //   flushbarTitleError: 'Oh no!',
-      //   flushbarTitleSuccess: 'Succes!',
-      //   providersTitle: 'login with'
-      // ),
-      // theme: LoginTheme(
-      //   primaryColor: Colors.teal,
-      //   accentColor: Colors.yellow,
-      //   errorColor: Colors.deepOrange,
-      //   pageColorLight: Colors.indigo.shade300,
-      //   pageColorDark: Colors.indigo.shade500,
-      //   logoWidth: 0.80,
-      //   titleStyle: TextStyle(
-      //     color: Colors.greenAccent,
-      //     fontFamily: 'Quicksand',
-      //     letterSpacing: 4,
-      //   ),
-      //   // beforeHeroFontSize: 50,
-      //   // afterHeroFontSize: 20,
-      //   bodyStyle: TextStyle(
-      //     fontStyle: FontStyle.italic,
-      //     decoration: TextDecoration.underline,
-      //   ),
-      //   textFieldStyle: TextStyle(
-      //     color: Colors.orange,
-      //     shadows: [Shadow(color: Colors.yellow, blurRadius: 2)],
-      //   ),
-      //   buttonStyle: TextStyle(
-      //     fontWeight: FontWeight.w800,
-      //     color: Colors.yellow,
-      //   ),
-      //   cardTheme: CardTheme(
-      //     color: Colors.yellow.shade100,
-      //     elevation: 5,
-      //     margin: EdgeInsets.only(top: 15),
-      //     shape: ContinuousRectangleBorder(
-      //         borderRadius: BorderRadius.circular(100.0)),
-      //   ),
-      //   inputTheme: InputDecorationTheme(
-      //     filled: true,
-      //     fillColor: Colors.purple.withOpacity(.1),
-      //     contentPadding: EdgeInsets.zero,
-      //     errorStyle: TextStyle(
-      //       backgroundColor: Colors.orange,
-      //       color: Colors.white,
-      //     ),
-      //     labelStyle: TextStyle(fontSize: 12),
-      //     enabledBorder: UnderlineInputBorder(
-      //       borderSide: BorderSide(color: Colors.blue.shade700, width: 4),
-      //       borderRadius: inputBorder,
-      //     ),
-      //     focusedBorder: UnderlineInputBorder(
-      //       borderSide: BorderSide(color: Colors.blue.shade400, width: 5),
-      //       borderRadius: inputBorder,
-      //     ),
-      //     errorBorder: UnderlineInputBorder(
-      //       borderSide: BorderSide(color: Colors.red.shade700, width: 7),
-      //       borderRadius: inputBorder,
-      //     ),
-      //     focusedErrorBorder: UnderlineInputBorder(
-      //       borderSide: BorderSide(color: Colors.red.shade400, width: 8),
-      //       borderRadius: inputBorder,
-      //     ),
-      //     disabledBorder: UnderlineInputBorder(
-      //       borderSide: BorderSide(color: Colors.grey, width: 5),
-      //       borderRadius: inputBorder,
-      //     ),
-      //   ),
-      //   buttonTheme: LoginButtonTheme(
-      //     splashColor: Colors.purple,
-      //     backgroundColor: Colors.pinkAccent,
-      //     highlightColor: Colors.lightGreen,
-      //     elevation: 9.0,
-      //     highlightElevation: 6.0,
-      //     shape: BeveledRectangleBorder(
-      //       borderRadius: BorderRadius.circular(10),
-      //     ),
-      //     // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      //     // shape: CircleBorder(side: BorderSide(color: Colors.green)),
-      //     // shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(55.0)),
-      //   ),
-      // ),
+      // サインアップ時の追加のフィールドのリスト
+      additionalSignupFields: const [/* ... */],
+      // ユーザー名のバリデーション関数
       userValidator: (value) {
         if (!value!.contains('@') || !value.endsWith('.com')) {
           return "Email must contain '@' and end with '.com'";
         }
         return null;
       },
+      // パスワードのバリデーション関数
       passwordValidator: (value) {
         if (value!.isEmpty) {
           return 'Password is empty';
         }
         return null;
       },
+      // ログイン時のコールバック関数
       onLogin: (loginData) {
         debugPrint('Login info');
         debugPrint('Name: ${loginData.name}');
         debugPrint('Password: ${loginData.password}');
         return _loginUser(loginData);
       },
+      // サインアップ時のコールバック関数
       onSignup: (signupData) {
         debugPrint('Signup info');
         debugPrint('Name: ${signupData.name}');
         debugPrint('Password: ${signupData.password}');
 
+        // 追加のサインアップ情報を表示します
         signupData.additionalSignupData?.forEach((key, value) {
           debugPrint('$key: $value');
         });
+        // 利用規約の情報を表示します
         if (signupData.termsOfService.isNotEmpty) {
           debugPrint('Terms of service: ');
           for (final element in signupData.termsOfService) {
@@ -260,56 +158,18 @@ class LoginScreen extends StatelessWidget {
         }
         return _signupUser(signupData);
       },
+      // サインアップアニメーションが完了した際のコールバック関数
       onSubmitAnimationCompleted: () {
-        // Navigator.of(context).pushReplacement(
-        //   FadePageRoute(
-        //     builder: (context) => const DashboardScreen(),
-        //   ),
-        // );
+        // ここに遷移ロジックを記述します
       },
+      // パスワードリカバリー時のコールバック関数
       onRecoverPassword: (name) {
         debugPrint('Recover password info');
         debugPrint('Name: $name');
         return _recoverPassword(name);
-        // Show new password dialog
+        // 新しいパスワードダイアログを表示します
       },
       headerWidget: const IntroWidget(),
-    );
-  }
-}
-
-class IntroWidget extends StatelessWidget {
-  const IntroWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(
-                text: "You are trying to login/sign up on server hosted on ",
-              ),
-              TextSpan(
-                text: "example.com",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          textAlign: TextAlign.justify,
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(child: Divider()),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Authenticate"),
-            ),
-            Expanded(child: Divider()),
-          ],
-        ),
-      ],
     );
   }
 }
