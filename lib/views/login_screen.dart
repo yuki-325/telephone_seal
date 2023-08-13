@@ -57,11 +57,15 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LoggerUtil.debug("LoginScreen build() begin");
+    LoggerUtil.debug("build() begin");
     // Flutter Loginウィジェットを返します
     return KeyboardCloseWrapperWidget(
       child: FlutterLogin(
         // ログイン画面のタイトルを設定します
+        theme: LoginTheme(
+            primaryColor: Colors.grey,
+            accentColor: Colors.white,
+            buttonTheme: const LoginButtonTheme(splashColor: Colors.blueGrey)),
         title: AppLabels.appName,
         navigateBackAfterRecovery: true,
         onConfirmRecover: _signupConfirm,
@@ -79,9 +83,13 @@ class LoginScreen extends StatelessWidget {
         additionalSignupFields: const [/* ... */],
         // ユーザー名のバリデーション関数
         userValidator: (value) {
+          LoggerUtil.debug("userValidator() begin");
+          LoggerUtil.logArguments("userValidator", {"value": value});
           if (!value!.contains('@') || !value.endsWith('.com')) {
+            LoggerUtil.debug("userValidator() バリデーションエラーです。 value:=> $value");
             return "メールアドレスには '@' と '.com' が含まれている必要があります";
           }
+          LoggerUtil.debug("userValidator() end");
           return null;
         },
         // パスワードのバリデーション関数
@@ -122,6 +130,8 @@ class LoginScreen extends StatelessWidget {
         // サインアップアニメーションが完了した際のコールバック関数
         onSubmitAnimationCompleted: () {
           // ここに遷移ロジックを記述します
+          LoggerUtil.debug("onSubmitAnimationCompleted() begin");
+          LoggerUtil.debug("onSubmitAnimationCompleted() end");
         },
         // パスワードリカバリー時のコールバック関数
         onRecoverPassword: (name) {
