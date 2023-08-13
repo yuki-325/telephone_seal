@@ -16,7 +16,7 @@ class IntroWidget extends StatelessWidget {
             children: [
               // テキストスパン内に複数の子テキストスパンを持つ形でテキストを構築します
               TextSpan(
-                text: "You are trying to login/sign up on server hosted on ",
+                text: "サーバーにログイン/サインアップしようとしています。ホストされているサーバー: ",
               ),
               // フォントの太さを変更したテキストスパンを追加します
               TextSpan(
@@ -36,7 +36,7 @@ class IntroWidget extends StatelessWidget {
             // パディングを追加したテキストウィジェットを配置します
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text("Authenticate"),
+              child: Text("ユーザ認証"),
             ),
             // 横幅を広げるためにExpandedウィジェットで包みます
             Expanded(child: Divider()),
