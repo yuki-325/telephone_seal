@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LoggerUtil.debug("MyApp build() begin");
+    LoggerUtil.debug("build() begin");
     return MaterialApp(
       title: AppLabels.appName,
       theme: AppTheme.lightTheme,
