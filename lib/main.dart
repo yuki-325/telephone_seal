@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:telephone_seal/common/theme/app_theme.dart';
-import 'package:telephone_seal/common/utils/constants.dart';
+import 'package:telephone_seal/common/constants/app_labels.dart';
 import 'package:telephone_seal/common/utils/logger_util.dart';
 import 'package:telephone_seal/common/utils/transition_route_observer.dart';
 
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     LoggerUtil.debug("MyApp build() begin");
     return MaterialApp(
-      title: Constants.appName,
+      title: AppLabels.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
