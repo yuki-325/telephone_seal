@@ -4,6 +4,10 @@ import 'package:logger/logger.dart';
 class LoggerUtil {
   static final Logger _logger = Logger();
 
+  static void logArguments(String methodName, Map<String, dynamic> arguments) {
+    _logger.d('$methodName - Arguments: $arguments');
+  }
+
   /// デバッグログを出力します。
   ///
   /// [message]はログに含めるテキストメッセージです。
