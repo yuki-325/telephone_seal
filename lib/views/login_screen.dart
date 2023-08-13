@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_login/flutter_login.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:telephone_seal/common/utils/logger_util.dart';
 import 'package:telephone_seal/mock/users.dart';
-import 'package:telephone_seal/common/utils/constants.dart';
+import 'package:telephone_seal/common/constants/app_labels.dart';
 import 'package:telephone_seal/widget/intro_widget.dart';
+import 'package:telephone_seal/widget/keyboard_close_wrapper_widget.dart';
 
 // ログイン画面を構築するウィジェットです
 class LoginScreen extends StatelessWidget {
@@ -21,10 +22,10 @@ class LoginScreen extends StatelessWidget {
   Future<String?> _loginUser(LoginData data) {
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(data.name)) {
-        return 'User not exists';
+        return 'ユーザーが存在しません';
       }
       if (mockUsers[data.name] != data.password) {
-        return 'Password does not match';
+        return 'パスワードが一致しません';
       }
       return null;
     });
@@ -41,7 +42,7 @@ class LoginScreen extends StatelessWidget {
   Future<String?> _recoverPassword(String name) {
     return Future.delayed(loginTime).then((_) {
       if (!mockUsers.containsKey(name)) {
-        return 'User not exists';
+        return 'ユーザーが存在しません';
       }
       return null;
     });
@@ -56,120 +57,81 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LoggerUtil.debug("LoginScreen build() begin");
     // Flutter Loginウィジェットを返します
-    return FlutterLogin(
-      // ログイン画面のタイトルを設定します
-      title: Constants.appName,
-      // ロゴやタイトルに使用するタグを設定します
-      logoTag: Constants.logoTag,
-      titleTag: Constants.titleTag,
-      navigateBackAfterRecovery: true,
-      onConfirmRecover: _signupConfirm,
-      onConfirmSignup: _signupConfirm,
-      loginAfterSignUp: false,
-      // ログインプロバイダーのリスト
-      loginProviders: [
-        // LinkedInでのサインインを提供するログインプロバイダー
-        LoginProvider(
-          button: Buttons.linkedIn,
-          label: 'Sign in with LinkedIn',
-          callback: () async {
-            return null;
-          },
-          providerNeedsSignUpCallback: () {
-            // 追加のフィールドを表示するかどうかを決定するためのロジックを提供します
-            return Future.value(true);
-          },
-        ),
-        // Googleでのサインインを提供するログインプロバイダー
-        LoginProvider(
-          icon: FontAwesomeIcons.google,
-          label: 'Google',
-          callback: () async {
-            return null;
-          },
-        ),
-        // GitHubでのサインインを提供するログインプロバイダー
-        LoginProvider(
-          icon: FontAwesomeIcons.githubAlt,
-          callback: () async {
-            debugPrint('start github sign in');
-            await Future.delayed(loginTime);
-            debugPrint('stop github sign in');
-            return null;
-          },
-        ),
-      ],
-      // 利用規約のリスト
-      termsOfService: [
-        TermOfService(
-          id: 'newsletter',
-          mandatory: false,
-          text: 'Newsletter subscription',
-        ),
-        TermOfService(
-          id: 'general-term',
-          mandatory: true,
-          text: 'Term of services',
-          linkUrl: 'https://github.com/NearHuscarl/flutter_login',
-        ),
-      ],
-      // サインアップ時の追加のフィールドのリスト
-      additionalSignupFields: const [/* ... */],
-      // ユーザー名のバリデーション関数
-      userValidator: (value) {
-        if (!value!.contains('@') || !value.endsWith('.com')) {
-          return "Email must contain '@' and end with '.com'";
-        }
-        return null;
-      },
-      // パスワードのバリデーション関数
-      passwordValidator: (value) {
-        if (value!.isEmpty) {
-          return 'Password is empty';
-        }
-        return null;
-      },
-      // ログイン時のコールバック関数
-      onLogin: (loginData) {
-        debugPrint('Login info');
-        debugPrint('Name: ${loginData.name}');
-        debugPrint('Password: ${loginData.password}');
-        return _loginUser(loginData);
-      },
-      // サインアップ時のコールバック関数
-      onSignup: (signupData) {
-        debugPrint('Signup info');
-        debugPrint('Name: ${signupData.name}');
-        debugPrint('Password: ${signupData.password}');
-
-        // 追加のサインアップ情報を表示します
-        signupData.additionalSignupData?.forEach((key, value) {
-          debugPrint('$key: $value');
-        });
-        // 利用規約の情報を表示します
-        if (signupData.termsOfService.isNotEmpty) {
-          debugPrint('Terms of service: ');
-          for (final element in signupData.termsOfService) {
-            debugPrint(
-              ' - ${element.term.id}: ${element.accepted == true ? 'accepted' : 'rejected'}',
-            );
+    return KeyboardCloseWrapperWidget(
+      child: FlutterLogin(
+        // ログイン画面のタイトルを設定します
+        title: AppLabels.appName,
+        navigateBackAfterRecovery: true,
+        onConfirmRecover: _signupConfirm,
+        onConfirmSignup: _signupConfirm,
+        loginAfterSignUp: false,
+        messages: LoginMessages(
+            forgotPasswordButton: AppLabels.forgotPasswordLabel,
+            loginButton: AppLabels.loginButtonLabel,
+            signupButton: AppLabels.signUpButtonLabel,
+            goBackButton: AppLabels.backButtonLabel,
+            recoverPasswordButton: AppLabels.sendRecoveryEmailLabel,
+            recoverPasswordIntro: AppLabels.recoverPasswordLabel,
+            recoverCodePasswordDescription: AppLabels.enterEmailLabel),
+        // サインアップ時の追加のフィールドのリスト
+        additionalSignupFields: const [/* ... */],
+        // ユーザー名のバリデーション関数
+        userValidator: (value) {
+          if (!value!.contains('@') || !value.endsWith('.com')) {
+            return "メールアドレスには '@' と '.com' が含まれている必要があります";
           }
-        }
-        return _signupUser(signupData);
-      },
-      // サインアップアニメーションが完了した際のコールバック関数
-      onSubmitAnimationCompleted: () {
-        // ここに遷移ロジックを記述します
-      },
-      // パスワードリカバリー時のコールバック関数
-      onRecoverPassword: (name) {
-        debugPrint('Recover password info');
-        debugPrint('Name: $name');
-        return _recoverPassword(name);
-        // 新しいパスワードダイアログを表示します
-      },
-      headerWidget: const IntroWidget(),
+          return null;
+        },
+        // パスワードのバリデーション関数
+        passwordValidator: (value) {
+          if (value!.isEmpty) {
+            return 'パスワードが空です';
+          }
+          return null;
+        },
+        // ログイン時のコールバック関数
+        onLogin: (loginData) {
+          LoggerUtil.debug('ログイン情報');
+          LoggerUtil.debug('名前: ${loginData.name}');
+          LoggerUtil.debug('パスワード: ${loginData.password}');
+          return _loginUser(loginData);
+        },
+        // サインアップ時のコールバック関数
+        onSignup: (signupData) {
+          LoggerUtil.debug('サインアップ情報');
+          LoggerUtil.debug('名前: ${signupData.name}');
+          LoggerUtil.debug('パスワード: ${signupData.password}');
+
+          // 追加のサインアップ情報を表示します
+          signupData.additionalSignupData?.forEach((key, value) {
+            LoggerUtil.debug('$key: $value');
+          });
+          // 利用規約の情報を表示します
+          if (signupData.termsOfService.isNotEmpty) {
+            LoggerUtil.debug('利用規約: ');
+            for (final element in signupData.termsOfService) {
+              LoggerUtil.debug(
+                ' - ${element.term.id}: ${element.accepted == true ? '同意済み' : '拒否済み'}',
+              );
+            }
+          }
+          return _signupUser(signupData);
+        },
+        // サインアップアニメーションが完了した際のコールバック関数
+        onSubmitAnimationCompleted: () {
+          // ここに遷移ロジックを記述します
+        },
+        // パスワードリカバリー時のコールバック関数
+        onRecoverPassword: (name) {
+          LoggerUtil.debug('パスワード回復情報');
+          LoggerUtil.debug('名前: $name');
+          return _recoverPassword(name);
+          // 新しいパスワードダイアログを表示します
+        },
+        headerWidget: const IntroWidget(),
+      ),
     );
   }
 }
