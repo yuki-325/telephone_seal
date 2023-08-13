@@ -48,8 +48,8 @@ class AppTheme {
     ),
 
     // カラースキームを設定します
-    colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-        .copyWith(secondary: Colors.orange),
+    colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey)
+        .copyWith(secondary: Colors.white),
   );
 
   /// 明るいテーマデータを定義します。
