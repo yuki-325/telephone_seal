@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:telephone_seal/utils/constants.dart';
-import 'package:telephone_seal/utils/transition_route_observer.dart';
+import 'package:telephone_seal/common/theme/app_theme.dart';
+import 'package:telephone_seal/common/utils/constants.dart';
+import 'package:telephone_seal/common/utils/logger_util.dart';
+import 'package:telephone_seal/common/utils/transition_route_observer.dart';
 
 import 'views/login_screen.dart';
 
 void main() {
+// システムUIのオーバーレイスタイルを設定します
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
+      // システムナビゲーションバーの背景色を設定します
       systemNavigationBarColor:
           SystemUiOverlayStyle.dark.systemNavigationBarColor,
+      // 他のシステムUIの設定をここに追加できます
     ),
   );
   runApp(const MyApp());
@@ -18,46 +23,14 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    LoggerUtil.debug("MyApp build() begin");
     return MaterialApp(
       title: Constants.appName,
-      theme: ThemeData(
-        textSelectionTheme:
-            const TextSelectionThemeData(cursorColor: Colors.orange),
-        // fontFamily: 'SourceSansPro',
-        textTheme: TextTheme(
-          displaySmall: const TextStyle(
-            fontFamily: 'OpenSans',
-            fontSize: 45.0,
-            // fontWeight: FontWeight.w400,
-            color: Colors.orange,
-          ),
-          labelLarge: const TextStyle(
-            // OpenSans is similar to NotoSans but the uppercases look a bit better IMO
-            fontFamily: 'OpenSans',
-          ),
-          bodySmall: TextStyle(
-            fontFamily: 'NotoSans',
-            fontSize: 12.0,
-            fontWeight: FontWeight.normal,
-            color: Colors.deepPurple[300],
-          ),
-          displayLarge: const TextStyle(fontFamily: 'Quicksand'),
-          displayMedium: const TextStyle(fontFamily: 'Quicksand'),
-          headlineMedium: const TextStyle(fontFamily: 'Quicksand'),
-          headlineSmall: const TextStyle(fontFamily: 'NotoSans'),
-          titleLarge: const TextStyle(fontFamily: 'NotoSans'),
-          titleMedium: const TextStyle(fontFamily: 'NotoSans'),
-          bodyLarge: const TextStyle(fontFamily: 'NotoSans'),
-          bodyMedium: const TextStyle(fontFamily: 'NotoSans'),
-          titleSmall: const TextStyle(fontFamily: 'NotoSans'),
-          labelSmall: const TextStyle(fontFamily: 'NotoSans'),
-        ),
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-            .copyWith(secondary: Colors.orange),
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       navigatorObservers: [TransitionRouteObserver()],
       initialRoute: LoginScreen.routeName,
       routes: {
