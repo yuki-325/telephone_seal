@@ -72,13 +72,14 @@ class LoginScreen extends StatelessWidget {
         onConfirmSignup: _signupConfirm,
         loginAfterSignUp: false,
         messages: LoginMessages(
-            forgotPasswordButton: AppLabels.forgotPasswordLabel,
-            loginButton: AppLabels.loginButtonLabel,
-            signupButton: AppLabels.signUpButtonLabel,
-            goBackButton: AppLabels.backButtonLabel,
-            recoverPasswordButton: AppLabels.sendRecoveryEmailLabel,
-            recoverPasswordIntro: AppLabels.recoverPasswordLabel,
-            recoverCodePasswordDescription: AppLabels.enterEmailLabel),
+          forgotPasswordButton: AppLabels.forgotPasswordLabel,
+          loginButton: AppLabels.loginButtonLabel,
+          signupButton: AppLabels.signUpButtonLabel,
+          goBackButton: AppLabels.backButtonLabel,
+          recoverPasswordButton: AppLabels.sendRecoveryEmailLabel,
+          recoverPasswordIntro: AppLabels.recoverPasswordLabel,
+          recoverCodePasswordDescription: AppLabels.enterEmailLabel,
+        ),
         // サインアップ時の追加のフィールドのリスト
         additionalSignupFields: const [/* ... */],
         // ユーザー名のバリデーション関数
