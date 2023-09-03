@@ -4,6 +4,7 @@ import 'package:telephone_seal/common/theme/app_theme.dart';
 import 'package:telephone_seal/common/constants/app_labels.dart';
 import 'package:telephone_seal/common/utils/logger_util.dart';
 import 'package:telephone_seal/common/utils/transition_route_observer.dart';
+import 'package:telephone_seal/views/timer_screen.dart';
 
 import 'views/login_screen.dart';
 
@@ -32,9 +33,10 @@ class MyApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       navigatorObservers: [TransitionRouteObserver()],
-      initialRoute: LoginScreen.routeName,
+      initialRoute: TimerScreen.routeName,
       routes: {
         LoginScreen.routeName: (context) => const LoginScreen(),
+        TimerScreen.routeName: (context) => const TimerScreen()
         // DashboardScreen.routeName: (context) => const DashboardScreen(),
       },
     );
