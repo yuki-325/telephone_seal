@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:telephone_seal/common/theme/app_theme.dart';
 import 'package:telephone_seal/common/constants/app_labels.dart';
 import 'package:telephone_seal/common/utils/logger_util.dart';
 import 'package:telephone_seal/common/utils/transition_route_observer.dart';
+import 'package:telephone_seal/models/timer_model.dart';
 import 'package:telephone_seal/views/timer_screen.dart';
 
 import 'views/login_screen.dart';
@@ -18,7 +20,12 @@ void main() {
       // 他のシステムUIの設定をここに追加できます
     ),
   );
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => TimerModel("01:00:00"), // TimerModelプロバイダーを作成
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
