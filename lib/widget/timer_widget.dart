@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:telephone_seal/common/utils/timer_gauge_painter.dart';
 import 'package:telephone_seal/models/timer_model.dart';
 import 'package:telephone_seal/widget/timer_gauge_widget.dart';
 
@@ -14,14 +15,15 @@ class TimerWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        timerModel.isActive
-            ? const TimerGaugeWidget()
-            :
-            // 残り時間のテキスト
-            Text(
-                timerModel.timeRemaining,
-                style: const TextStyle(fontSize: 24),
-              ),
+        // timerModel.isActive
+        //     ?
+        const TimerGaugeWidget(),
+        //     :
+        //     // 残り時間のテキスト
+        // Text(
+        //   timerModel.timeRemaining,
+        //   style: const TextStyle(fontSize: 24),
+        // ),
         // タイマーのゲージ
         const SizedBox(height: 20),
         Row(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:telephone_seal/common/utils/logger_util.dart';
 
 class TimerModel extends ChangeNotifier {
@@ -8,10 +9,20 @@ class TimerModel extends ChangeNotifier {
   late Duration _currentDuration; // 現在の残り時間を格納する変数
   bool _isActive = false;
   late Timer _timer;
-
+  late final TickerProvider _tickerProvider;
+  late AnimationController _controller;
   TimerModel(String initialTime) {
     _initialDuration = parseTime(initialTime); // 指定された時間を解析してDurationに変換
     _currentDuration = _initialDuration;
+    _tickerProvider = TimerModelTickerProvider();
+    _controller = AnimationController(
+      vsync: _tickerProvider, // カスタムクラスを使用
+      duration: const Duration(seconds: 1),
+    );
+  }
+
+  AnimationController get controller {
+    return _controller;
   }
 
   String get timeRemaining {
@@ -22,6 +33,19 @@ class TimerModel extends ChangeNotifier {
     final seconds =
         (_currentDuration.inSeconds % 60).toString().padLeft(2, '0');
     return '$hours:$minutes:$seconds';
+  }
+
+  double get percentage {
+    final currentMilliseconds = _currentDuration.inMilliseconds;
+    final totalMilliseconds = _initialDuration.inMilliseconds;
+
+    if (currentMilliseconds <= 0 || totalMilliseconds <= 0) {
+      return 0.0;
+    }
+
+    final percentage =
+        (currentMilliseconds / totalMilliseconds).clamp(0.0, 1.0);
+    return percentage;
   }
 
   bool get isActive => _isActive;
@@ -38,8 +62,16 @@ class TimerModel extends ChangeNotifier {
         notifyListeners();
       }
     });
-    _isActive = true;
+    if (_controller.isAnimating) {
+      _controller.stop();
+    }
+    _controller.reset();
+    _controller.duration = _currentDuration;
+    _controller.forward();
+    // タイマーの残り時間に応じて`percentage`を更新
+    // 例: タイマーが進行する度に `percentage = 新しい割合` を計算し、`notifyListeners()`を呼び出す
     notifyListeners();
+    _isActive = true;
     LoggerUtil.debug("startTimer() end");
   }
 
@@ -50,6 +82,10 @@ class TimerModel extends ChangeNotifier {
       _isActive = false;
       notifyListeners();
     }
+    if (_controller.isAnimating) {
+      _controller.stop();
+      // _controller.dispose();
+    }
     LoggerUtil.debug("stopTimer() end");
   }
 
@@ -58,6 +94,7 @@ class TimerModel extends ChangeNotifier {
     _timer.cancel();
     _currentDuration = _initialDuration;
     _isActive = false;
+    _controller.stop();
     notifyListeners();
     LoggerUtil.debug("resetTimer() end");
   }
@@ -75,5 +112,12 @@ class TimerModel extends ChangeNotifier {
     }
     // パースに失敗した場合、デフォルトとして0秒のDurationを返す
     return Duration.zero;
+  }
+}
+
+class TimerModelTickerProvider implements TickerProvider {
+  @override
+  Ticker createTicker(TickerCallback onTick) {
+    return Ticker(onTick);
   }
 }
