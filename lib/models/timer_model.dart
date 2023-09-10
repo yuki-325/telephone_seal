@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:telephone_seal/common/utils/logger_util.dart';
+import 'package:telephone_seal/common/utils/timer_uitils.dart';
 
 class TimerModel extends ChangeNotifier {
   late Duration _initialDuration; // 初期時間を格納する変数
@@ -16,9 +17,9 @@ class TimerModel extends ChangeNotifier {
     _currentDuration = _initialDuration;
     _tickerProvider = TimerModelTickerProvider();
     _controller = AnimationController(
-      vsync: _tickerProvider, // カスタムクラスを使用
-      duration: const Duration(seconds: 1),
-    );
+        vsync: _tickerProvider, // カスタムクラスを使用
+        duration: _initialDuration,
+        value: 0.0);
   }
 
   AnimationController get controller {
@@ -32,22 +33,16 @@ class TimerModel extends ChangeNotifier {
         (_currentDuration.inMinutes % 60).toString().padLeft(2, '0');
     final seconds =
         (_currentDuration.inSeconds % 60).toString().padLeft(2, '0');
-    return '$hours:$minutes:$seconds';
+    final milliseconds =
+        (_currentDuration.inMilliseconds % 1000).toString().padLeft(3, '0');
+    return '$hours:$minutes:$seconds:$milliseconds';
   }
 
   double get percentage {
     LoggerUtil.debug("get percentage _currentDuration :=> $_currentDuration");
     LoggerUtil.debug("get percentage _initialDuration :=> $_initialDuration");
-
-    final currentMilliseconds = _currentDuration.inMilliseconds;
-    final totalMilliseconds = _initialDuration.inMilliseconds;
-
-    if (currentMilliseconds <= 0 || totalMilliseconds <= 0) {
-      return 0.0;
-    }
-
     final percentage =
-        (currentMilliseconds / totalMilliseconds).clamp(0.0, 1.0);
+        TimerUtils.calculatePercentage(_currentDuration, _initialDuration);
     LoggerUtil.debug("get percentage return :=> $percentage");
     return percentage;
   }
@@ -56,27 +51,21 @@ class TimerModel extends ChangeNotifier {
 
   void startTimer() {
     LoggerUtil.debug("startTimer() begin");
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _controller.forward();
+    const minusDuration = Duration(seconds: 1);
+    _timer = Timer.periodic(minusDuration, (timer) {
+      LoggerUtil.info("animationController value :=> ${_controller.value}");
       if (_currentDuration.inSeconds > 0) {
-        _currentDuration -= const Duration(seconds: 1);
-        _controller.forward();
-        notifyListeners();
+        _currentDuration -= minusDuration;
       } else {
         _timer.cancel();
+        _controller.stop();
         _isActive = false;
-        notifyListeners();
       }
+      notifyListeners();
     });
-    // if (_controller.isAnimating) {
-    //   _controller.stop();
-    // }
-    // _controller.reset();
-    // _controller.duration = _currentDuration;
-    // _controller.forward();
-    // タイマーの残り時間に応じて`percentage`を更新
-    // 例: タイマーが進行する度に `percentage = 新しい割合` を計算し、`notifyListeners()`を呼び出す
-    notifyListeners();
     _isActive = true;
+    notifyListeners();
     LoggerUtil.debug("startTimer() end");
   }
 
@@ -88,7 +77,7 @@ class TimerModel extends ChangeNotifier {
       notifyListeners();
     }
     if (_controller.isAnimating) {
-      // _controller.stop();
+      _controller.stop();
       // _controller.dispose();
     }
     LoggerUtil.debug("stopTimer() end");

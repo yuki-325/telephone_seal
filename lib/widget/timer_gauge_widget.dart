@@ -24,11 +24,12 @@ class _TimerGaugeWidgetState extends State<TimerGaugeWidget>
   Widget build(BuildContext context) {
     final timerModel = Provider.of<TimerModel>(context, listen: true);
     return AnimatedBuilder(
-        animation: Tween<double>(
-          begin: timerModel.percentage,
-          end: 0,
-        ).animate(CurvedAnimation(
-            parent: timerModel.controller, curve: Curves.easeInOut)),
+        animation: timerModel.controller,
+        // Tween<double>(
+        //   begin: 1.0,
+        //   end: 0.0,
+        // ).animate(CurvedAnimation(
+        //     parent: timerModel.controller, curve: Curves.easeInOut)),
         builder: (BuildContext context, Widget? child) {
           return Column(children: [
             CustomPaint(
