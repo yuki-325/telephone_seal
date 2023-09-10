@@ -36,6 +36,9 @@ class TimerModel extends ChangeNotifier {
   }
 
   double get percentage {
+    LoggerUtil.debug("get percentage _currentDuration :=> $_currentDuration");
+    LoggerUtil.debug("get percentage _initialDuration :=> $_initialDuration");
+
     final currentMilliseconds = _currentDuration.inMilliseconds;
     final totalMilliseconds = _initialDuration.inMilliseconds;
 
@@ -45,6 +48,7 @@ class TimerModel extends ChangeNotifier {
 
     final percentage =
         (currentMilliseconds / totalMilliseconds).clamp(0.0, 1.0);
+    LoggerUtil.debug("get percentage return :=> $percentage");
     return percentage;
   }
 
@@ -55,6 +59,7 @@ class TimerModel extends ChangeNotifier {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_currentDuration.inSeconds > 0) {
         _currentDuration -= const Duration(seconds: 1);
+        _controller.forward();
         notifyListeners();
       } else {
         _timer.cancel();
@@ -62,12 +67,12 @@ class TimerModel extends ChangeNotifier {
         notifyListeners();
       }
     });
-    if (_controller.isAnimating) {
-      _controller.stop();
-    }
-    _controller.reset();
-    _controller.duration = _currentDuration;
-    _controller.forward();
+    // if (_controller.isAnimating) {
+    //   _controller.stop();
+    // }
+    // _controller.reset();
+    // _controller.duration = _currentDuration;
+    // _controller.forward();
     // タイマーの残り時間に応じて`percentage`を更新
     // 例: タイマーが進行する度に `percentage = 新しい割合` を計算し、`notifyListeners()`を呼び出す
     notifyListeners();
@@ -83,7 +88,7 @@ class TimerModel extends ChangeNotifier {
       notifyListeners();
     }
     if (_controller.isAnimating) {
-      _controller.stop();
+      // _controller.stop();
       // _controller.dispose();
     }
     LoggerUtil.debug("stopTimer() end");

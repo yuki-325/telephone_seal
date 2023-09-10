@@ -30,11 +30,27 @@ class _TimerGaugeWidgetState extends State<TimerGaugeWidget>
         ).animate(CurvedAnimation(
             parent: timerModel.controller, curve: Curves.easeInOut)),
         builder: (BuildContext context, Widget? child) {
-          return CustomPaint(
-            size: Size(radius * 2, radius * 2),
-            painter: TimerGaugePainter(
-                percentage: timerModel.percentage, color: Colors.purple),
-          );
+          return Column(children: [
+            CustomPaint(
+              size: Size(radius * 2, radius * 2),
+              painter: TimerGaugePainter(
+                  percentage: timerModel.percentage, color: Colors.purple),
+              child: SizedBox(
+                width: radius * 2,
+                height: radius * 2,
+                // decoration: BoxDecoration(
+                //     shape: BoxShape.circle,
+                //     border:
+                //         Border.all(color: Colors.black87, width: strokeWidth)),
+                child: Center(
+                  child: Text(
+                    timerModel.timeRemaining,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+              ),
+            ),
+          ]);
         });
   }
 }

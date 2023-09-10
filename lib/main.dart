@@ -22,7 +22,7 @@ void main() {
   );
   runApp(
     ChangeNotifierProvider(
-      create: (context) => TimerModel("01:00:00"), // TimerModelプロバイダーを作成
+      create: (context) => TimerModel("00:00:30"), // TimerModelプロバイダーを作成
       child: const MyApp(),
     ),
   );
