@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:telephone_seal/common/utils/logger_util.dart';
 
 class TimerGaugePainter extends CustomPainter {
   final double percentage; // ゲージの割合（0.0から1.0までの値）
@@ -13,6 +14,7 @@ class TimerGaugePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    LoggerUtil.debug("paint() begin");
     final paint = Paint()
       ..color = color // ゲージの色を設定
       ..strokeCap = StrokeCap.round // 線の端を丸くする
@@ -31,6 +33,7 @@ class TimerGaugePainter extends CustomPainter {
       false, // 弧を塗りつぶさない
       paint, // 描画設定
     );
+    LoggerUtil.debug("paint() end");
   }
 
   @override
